@@ -4,7 +4,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+/queries_pasta_temporaria
 ### STS ###
 .apt_generated
 .classpath
