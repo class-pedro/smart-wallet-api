@@ -6,9 +6,11 @@ public class ExpenseRepositoryQueries {
     }
 
     public static final String GET_CREDIT_CARD_STATEMENTS = """
-                    WITH periods AS (
-                        SELECT
-                            c.id AS card_id,
+            WITH periods AS (
+                SELECT
+                    c.id AS card_id,
+                    CASE\s
+                        WHEN c.closing_date_day > c.due_date_day THEN\s
                             make_date(
                                 COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
                                 COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
@@ -24,7 +26,8 @@ public class ExpenseRepositoryQueries {
                                         )
                                     )::int
                                 )
-                            ) AS current_closing,
+                            ) - INTERVAL '1 month'
+                        ELSE
                             make_date(
                                 COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
                                 COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
@@ -40,24 +43,61 @@ public class ExpenseRepositoryQueries {
                                         )
                                     )::int
                                 )
-                            ) - INTERVAL '1 month' AS previous_closing
-                        FROM cards c
-                        WHERE c.id IN :cardIds
-                    )
-                    SELECT
-                        e.card_id AS cardId,
-                        c.name AS name,
-                        SUM(e.cost) AS totalFatura
-                    FROM expenses e
-                    INNER JOIN cards c ON e.card_id = c.id
-                    INNER JOIN periods p ON p.card_id = c.id
-                    WHERE (
-                            (e.payment_method IN ('installment') AND e.purchase_date BETWEEN p.previous_closing AND p.current_closing AND e.root_expense IS NOT NULL)
-                            OR (e.payment_method = 'payInFull' AND e.purchase_date BETWEEN p.previous_closing AND p.current_closing)
-                            OR e.payment_method = 'recurrent'
-                        )
-                      AND e.card_id IN :cardIds
-                    GROUP BY e.card_id, c.name
+                            )
+                    END AS current_closing,
+                    CASE\s
+                        WHEN c.closing_date_day > c.due_date_day THEN\s
+                            make_date(
+                                COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
+                                COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
+                                LEAST(
+                                    c.closing_date_day,
+                                    EXTRACT(
+                                        DAY FROM (
+                                            date_trunc('month', make_date(
+                                                COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
+                                                COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
+                                                1
+                                            )) + interval '1 month - 1 day'
+                                        )
+                                    )::int
+                                )
+                            ) - INTERVAL '2 month'
+                        ELSE
+                            make_date(
+                                COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
+                                COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
+                                LEAST(
+                                    c.closing_date_day,
+                                    EXTRACT(
+                                        DAY FROM (
+                                            date_trunc('month', make_date(
+                                                COALESCE(:year, EXTRACT(YEAR FROM CURRENT_DATE)::int),
+                                                COALESCE(:month, EXTRACT(MONTH FROM CURRENT_DATE)::int),
+                                                1
+                                            )) + interval '1 month - 1 day'
+                                        )
+                                    )::int
+                                )
+                            ) - INTERVAL '1 month'
+                    END AS previous_closing
+                FROM cards c
+                WHERE c.id IN :cardIds
+            )
+            SELECT
+                e.card_id AS cardId,
+                c.name AS name,
+                SUM(e.cost) AS totalFatura
+            FROM expenses e
+            INNER JOIN cards c ON e.card_id = c.id
+            INNER JOIN periods p ON p.card_id = c.id
+            WHERE (
+                    (e.payment_method IN ('installment') AND e.purchase_date BETWEEN p.previous_closing AND p.current_closing AND e.root_expense IS NOT NULL)
+                    OR (e.payment_method = 'payInFull' AND e.purchase_date BETWEEN p.previous_closing AND p.current_closing)
+                    OR e.payment_method = 'recurrent'
+                )
+              AND e.card_id IN :cardIds
+            GROUP BY e.card_id, c.name
             """;
 
     public static final String GET_NON_CREDIT_RECURRENT_EXPENSES = """
