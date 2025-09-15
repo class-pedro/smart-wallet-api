@@ -15,13 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;
-
-    // TO DO: Remover essa dependencia, usada somente para viabilizar o método getCreditCardStatementsDTO que também
-    //  será deletado
-    private final ExpenseRepository expenseRepository;
-
     private final DashboardService dashboardService;
-
 
     @PostMapping
     public void createExpense(@RequestBody CreateExpenseDTO createExpenseDTO) {
@@ -33,9 +27,6 @@ public class ExpenseController {
     public GetDashboardDTO getDashboard(@RequestParam UUID walletId,
                                         @RequestParam(required = false) Integer month,
                                         @RequestParam(required = false) Integer year) {
-
-
-
         return dashboardService.getDashboard(walletId, year, month);
     }
 }
