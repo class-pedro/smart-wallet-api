@@ -1,12 +1,13 @@
 package com.example.smart_wallet.controller;
 
 import com.example.smart_wallet.dto.CreateCardDTO;
+import com.example.smart_wallet.dto.GetCardIdAndNameDTO;
 import com.example.smart_wallet.service.card.CardService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/cards")
@@ -17,5 +18,10 @@ public class CardController {
     @PostMapping
     public void createCard(@RequestBody CreateCardDTO cardDTO) {
         cardService.create(cardDTO);
+    }
+
+    @GetMapping("/cards-to-input")
+    public List<GetCardIdAndNameDTO> getCardIdAndNameById(@RequestParam String walletId) {
+        return cardService.getCardIdAndNameById(walletId);
     }
 }

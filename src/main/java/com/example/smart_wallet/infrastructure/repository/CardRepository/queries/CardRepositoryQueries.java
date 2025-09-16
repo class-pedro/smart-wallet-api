@@ -10,4 +10,11 @@ public class CardRepositoryQueries {
             FROM cards
             WHERE wallet_id = :walletId
             """;
+
+    public static final String GET_CARD_IDS_AND_NAMES = """
+            SELECT id,
+                name
+            FROM cards
+            WHERE wallet_id = :walletId
+            """;
 }

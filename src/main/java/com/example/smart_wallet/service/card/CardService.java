@@ -2,11 +2,14 @@ package com.example.smart_wallet.service.card;
 
 import com.example.smart_wallet.domain.entity.Card;
 import com.example.smart_wallet.dto.CreateCardDTO;
+import com.example.smart_wallet.dto.GetCardIdAndNameDTO;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface CardService {
-    public Card getById(String cardId);
+    Card getById(String cardId);
 
-    public void create(CreateCardDTO createCardDTO);
+    List<GetCardIdAndNameDTO> getCardIdAndNameById(String cardId);
+
+    void create(CreateCardDTO createCardDTO);
 }

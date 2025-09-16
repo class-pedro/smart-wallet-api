@@ -36,6 +36,4 @@ public class CreateUserDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).*$",
             message = "The password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol.")
     private String password;
-
-
 }
