@@ -1,9 +1,12 @@
 package com.example.smart_wallet.controller;
 
+import com.example.smart_wallet.domain.entity.User;
 import com.example.smart_wallet.dto.AuthenticationDTO;
 import com.example.smart_wallet.dto.CreateUserDTO;
+import com.example.smart_wallet.dto.LoginResponseDTO;
 import com.example.smart_wallet.infrastructure.repository.UserRepository;
 import com.example.smart_wallet.service.AuthenticationServiceImpl;
+import com.example.smart_wallet.service.TokenServiceImpl;
 import com.example.smart_wallet.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,7 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationServiceImpl;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final TokenServiceImpl tokenServiceImpl;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO authenticationDTO) {
@@ -31,9 +35,12 @@ public class AuthenticationController {
                 authenticationDTO.getEmail(),
                 authenticationDTO.getPassword()
         );
+
         Authentication authentication = authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        String token = tokenServiceImpl.generateToken((User) authentication.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/sign-up")
