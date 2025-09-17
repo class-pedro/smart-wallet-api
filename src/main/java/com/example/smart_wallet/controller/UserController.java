@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
+    // Deprecated
+    // Remover pois o enpoint foi movido pra AuthenticationController
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody @Valid CreateUserDTO userDto) {
         userService.signUpUser(userDto);
