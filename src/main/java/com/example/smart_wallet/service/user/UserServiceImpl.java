@@ -6,6 +6,7 @@ import com.example.smart_wallet.infrastructure.repository.UserRepository;
 import com.example.smart_wallet.mapper.CreateUserMapper;
 import com.example.smart_wallet.service.wallet.WalletService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(CreateUserDTO userDto) {
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.getPassword());
+        userDto.setPassword(encryptedPassword);
         final User user = CreateUserMapper.toEntity(userDto);
 
         return this.userRepository.save(user);
