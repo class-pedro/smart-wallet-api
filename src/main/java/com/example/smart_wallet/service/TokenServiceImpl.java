@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.smart_wallet.domain.entity.User;
+import com.example.smart_wallet.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +15,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service
+@RequiredArgsConstructor
 public class TokenServiceImpl {
 
     @Value("${api.security.token.secret}")
     private String secret;
+
+    private final UserService userService;
 
     public String generateToken(User user) {
         try {
@@ -25,6 +30,8 @@ public class TokenServiceImpl {
             String token = JWT.create()
                     .withIssuer("smart-wallet-api")
                     .withSubject(user.getEmail())
+                    .withClaim("walletId",
+                            user.getWallet().getId().toString())
                     .withExpiresAt(expiresAt)
                     .sign(algorithm);
 
