@@ -1,4 +1,4 @@
-package com.example.smart_wallet.service.card;
+package com.example.smart_wallet.service;
 
 import com.example.smart_wallet.domain.entity.Card;
 import com.example.smart_wallet.domain.entity.CardType;
@@ -8,7 +8,6 @@ import com.example.smart_wallet.dto.GetCardIdAndNameDTO;
 import com.example.smart_wallet.infrastructure.repository.CardRepository.CardRepository;
 import com.example.smart_wallet.infrastructure.repository.CardTypeRepository;
 import com.example.smart_wallet.mapper.CreateCardMapper;
-import com.example.smart_wallet.service.wallet.WalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
