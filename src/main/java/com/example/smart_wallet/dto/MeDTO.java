@@ -1,4 +1,4 @@
 package com.example.smart_wallet.dto;
 
-public record MeDTO() {
+public record MeDTO(String walletId) {
 }
