@@ -1,4 +1,4 @@
-package com.example.smart_wallet.service.wallet;
+package com.example.smart_wallet.service;
 
 import com.example.smart_wallet.domain.entity.User;
 import com.example.smart_wallet.domain.entity.Wallet;

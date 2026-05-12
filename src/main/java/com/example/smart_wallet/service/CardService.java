@@ -1,4 +1,4 @@
-package com.example.smart_wallet.service.card;
+package com.example.smart_wallet.service;
 
 import com.example.smart_wallet.domain.entity.Card;
 import com.example.smart_wallet.dto.CreateCardDTO;

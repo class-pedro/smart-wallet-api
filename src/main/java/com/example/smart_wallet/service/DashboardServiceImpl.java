@@ -1,4 +1,4 @@
-package com.example.smart_wallet.service.dashboard;
+package com.example.smart_wallet.service;
 
 import com.example.smart_wallet.dto.dashboardDTO.GetCreditCardStatementsDTO;
 import com.example.smart_wallet.dto.dashboardDTO.GetDashboardDTO;
