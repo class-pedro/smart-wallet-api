@@ -2,8 +2,7 @@ package com.example.smart_wallet.controller;
 
 import com.example.smart_wallet.dto.CreateExpenseDTO;
 import com.example.smart_wallet.dto.dashboardDTO.GetDashboardDTO;
-import com.example.smart_wallet.infrastructure.repository.ExpenseRepository.ExpenseRepository;
-import com.example.smart_wallet.service.dashboard.DashboardService;
+import com.example.smart_wallet.service.DashboardService;
 import com.example.smart_wallet.service.expense.ExpenseService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

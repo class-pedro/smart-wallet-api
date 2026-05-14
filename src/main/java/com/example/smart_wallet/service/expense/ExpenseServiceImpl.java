@@ -6,8 +6,8 @@ import com.example.smart_wallet.domain.entity.Wallet;
 import com.example.smart_wallet.dto.CreateExpenseDTO;
 import com.example.smart_wallet.infrastructure.repository.ExpenseRepository.ExpenseRepository;
 import com.example.smart_wallet.mapper.CreateExpenseMapper;
-import com.example.smart_wallet.service.card.CardService;
-import com.example.smart_wallet.service.wallet.WalletService;
+import com.example.smart_wallet.service.CardService;
+import com.example.smart_wallet.service.WalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
