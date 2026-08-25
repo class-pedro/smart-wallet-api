@@ -1,0 +1,20 @@
+package com.example.smart_wallet.modules.card.infrastructure.persistence.repository.queries;
+
+public class CardRepositoryQueries {
+    private CardRepositoryQueries() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static final String GET_CARD_IDS_BY_WALLET_ID = """
+            SELECT id
+            FROM cards
+            WHERE wallet_id = :walletId
+            """;
+
+    public static final String GET_CARD_IDS_AND_NAMES = """
+            SELECT id,
+                name
+            FROM cards
+            WHERE wallet_id = :walletId
+            """;
+}
