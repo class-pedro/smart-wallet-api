@@ -1,6 +1,6 @@
-package com.example.smart_wallet.modules.expense.service;
+package com.example.smart_wallet.modules.dashboard.service;
 
-import com.example.smart_wallet.modules.expense.dto.dashboardDTO.GetDashboardDTO;
+import com.example.smart_wallet.modules.dashboard.dto.GetDashboardDTO;
 
 import java.util.UUID;
 

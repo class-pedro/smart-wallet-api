@@ -1,4 +1,4 @@
-package com.example.smart_wallet.modules.expense.dto.dashboardDTO;
+package com.example.smart_wallet.modules.dashboard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

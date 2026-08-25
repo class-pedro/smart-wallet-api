@@ -1,7 +1,7 @@
-package com.example.smart_wallet.modules.expense.infrastructure.repository.queries;
+package com.example.smart_wallet.modules.dashboard.infrastructure.repository.queries;
 
-public class ExpenseRepositoryQueries {
-    private ExpenseRepositoryQueries() {
+public class DashboardRepositoryQueries {
+    private DashboardRepositoryQueries() {
         throw new IllegalStateException("Utility class");
     }
 

@@ -1,11 +1,11 @@
-package com.example.smart_wallet.modules.expense.service;
+package com.example.smart_wallet.modules.dashboard.service;
 
-import com.example.smart_wallet.modules.expense.dto.dashboardDTO.GetCreditCardStatementsDTO;
-import com.example.smart_wallet.modules.expense.dto.dashboardDTO.GetDashboardDTO;
-import com.example.smart_wallet.modules.expense.dto.dashboardDTO.GetDashboardExpenseDTO;
-import com.example.smart_wallet.modules.expense.dto.dashboardDTO.GetNonCreditExpensesDTO;
+import com.example.smart_wallet.modules.dashboard.dto.GetCreditCardStatementsDTO;
+import com.example.smart_wallet.modules.dashboard.dto.GetDashboardDTO;
+import com.example.smart_wallet.modules.dashboard.dto.GetDashboardExpenseDTO;
+import com.example.smart_wallet.modules.dashboard.dto.GetNonCreditExpensesDTO;
+import com.example.smart_wallet.modules.dashboard.infrastructure.repository.DashboardRepository;
 import com.example.smart_wallet.modules.card.infrastructure.repository.CardRepository;
-import com.example.smart_wallet.modules.expense.infrastructure.repository.ExpenseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +18,16 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
-    // TODO: Chamar o Expense Service pra ipso ou então criar um dashboard repository com as queries
-    private ExpenseRepository expenseRepository;
-    private CardRepository cardRepository;
+    private final DashboardRepository dashboardRepository;
+    private final CardRepository cardRepository;
 
     public GetDashboardDTO getDashboard(UUID walletId, Integer year, Integer month) {
         BigDecimal sumOfExpenses = BigDecimal.ZERO;
         List<UUID> cardIds = cardRepository.findIdsByWalletId(walletId);
-        List<GetCreditCardStatementsDTO> statements = expenseRepository.findStatementsByCards(year,
+        List<GetCreditCardStatementsDTO> statements = dashboardRepository.findStatementsByCards(year,
                 month, cardIds);
-        List<GetNonCreditExpensesDTO> recurrentExpenses = expenseRepository.findNonCreditRecurrentExpenses();
-        List<GetNonCreditExpensesDTO> payInFullExpenses = expenseRepository.findPayInFullExpensesByMonthAndYear(year,
+        List<GetNonCreditExpensesDTO> recurrentExpenses = dashboardRepository.findNonCreditRecurrentExpenses();
+        List<GetNonCreditExpensesDTO> payInFullExpenses = dashboardRepository.findPayInFullExpensesByMonthAndYear(year,
                 month);
         List<GetDashboardExpenseDTO> dashboardExpenses = new ArrayList<>();
 
