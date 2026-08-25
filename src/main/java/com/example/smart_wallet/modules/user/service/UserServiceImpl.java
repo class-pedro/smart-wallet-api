@@ -1,0 +1,33 @@
+package com.example.smart_wallet.modules.user.service;
+
+import com.example.smart_wallet.modules.user.domain.entity.User;
+import com.example.smart_wallet.modules.user.dto.CreateUserDTO;
+import com.example.smart_wallet.modules.user.infrastructure.repository.UserRepository;
+import com.example.smart_wallet.modules.user.mapper.CreateUserMapper;
+import com.example.smart_wallet.modules.wallet.service.WalletService;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@AllArgsConstructor
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final WalletService walletService;
+
+    @Override
+    public void signUpUser(CreateUserDTO userDto) {
+        final User newUser = createUser(userDto);
+
+        walletService.createWallet(newUser);
+    }
+
+    @Override
+    public User createUser(CreateUserDTO userDto) {
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.getPassword());
+        userDto.setPassword(encryptedPassword);
+        final User user = CreateUserMapper.toEntity(userDto);
+
+        return this.userRepository.save(user);
+    }
+}
