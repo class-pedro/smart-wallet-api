@@ -27,7 +27,7 @@ public class CreateExpenseUseCaseHandler implements CreateExpenseUseCase {
     private final FindCardUseCase findCardUseCase;
 
     @Override
-    public void execute(CreateExpenseCommand createExpenseCommand) {
+    public Expense execute(CreateExpenseCommand createExpenseCommand) {
 
         validateExpense(createExpenseCommand.paymentType(), createExpenseCommand.walletId(), createExpenseCommand.cardId());
 
@@ -58,11 +58,13 @@ public class CreateExpenseUseCaseHandler implements CreateExpenseUseCase {
             expense.setWallet(wallet);
         }
 
-        UUID newExpenseId = expenseRepository.save(expense).getId();
+        Expense newExpense = expenseRepository.save(expense);
 
         if (createExpenseCommand.installments() != null && createExpenseCommand.installments() > 1) {
-            registerInstallments(newExpenseId, createExpenseCommand, wallet, card);
+            registerInstallments(newExpense.getId(), createExpenseCommand, wallet, card);
         }
+
+        return newExpense;
     }
 
     private void registerInstallments(UUID rootExpenseId,
