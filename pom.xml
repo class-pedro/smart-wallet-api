@@ -119,6 +119,40 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.18.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>com.example.smart_wallet.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.example.smart_wallet.*</param>
+                    </targetTests>
+                    <excludedClasses>
+                        <param>com.example.smart_wallet.SmartWalletApplication</param>
+                        <param>com.example.smart_wallet.**.domain.entity.*</param>
+                        <param>com.example.smart_wallet.**.application.dto.*</param>
+                        <param>com.example.smart_wallet.**.infrastructure.web.dto.*</param>
+                        <param>com.example.smart_wallet.infrastructure.security.SpringSecurityConfig</param>
+                        <param>com.example.smart_wallet.**.infrastructure.persistence.*Initializer</param>
+                    </excludedClasses>
+                    <excludedTestClasses>
+                        <param>com.example.smart_wallet.SmartWalletApplicationTests</param>
+                    </excludedTestClasses>
+                    <mutationThreshold>80</mutationThreshold>
+                    <coverageThreshold>80</coverageThreshold>
+                    <timestampedReports>false</timestampedReports>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <repositories>
