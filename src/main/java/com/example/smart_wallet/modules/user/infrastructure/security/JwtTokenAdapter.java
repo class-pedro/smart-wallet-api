@@ -27,11 +27,12 @@ public class JwtTokenAdapter implements TokenGenerator, com.example.smart_wallet
         try {
             Instant expiresAt = generateExpiresAt();
             Algorithm algorithm = Algorithm.HMAC256(secret);
+            String walletId = user.getWallet() != null ? user.getWallet().getId().toString() : null;
             String token = JWT.create()
                     .withIssuer("smart-wallet-api")
                     .withSubject(user.getEmail())
-                    .withClaim("walletId",
-                            user.getWallet().getId().toString())
+                    .withClaim("walletId", walletId)
+                    .withClaim("profileComplete", user.isProfileComplete())
                     .withExpiresAt(expiresAt)
                     .sign(algorithm);
 
@@ -65,6 +66,19 @@ public class JwtTokenAdapter implements TokenGenerator, com.example.smart_wallet
             validateToken(token);
             DecodedJWT decoded = JWT.decode(token);
             return decoded.getClaim("walletId").asString();
+        } catch (Exception e) {
+            throw new RuntimeException("Error validating token", e);
+        }
+    }
+
+    @Override
+    public String getEmailFromToken(String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            return validateToken(token);
         } catch (Exception e) {
             throw new RuntimeException("Error validating token", e);
         }

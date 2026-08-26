@@ -6,4 +6,6 @@ public interface TokenGenerator {
     String generateToken(User user);
 
     String getWalletIdFromToken(String token);
+
+    String getEmailFromToken(String token);
 }
