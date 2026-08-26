@@ -40,6 +40,8 @@ class JwtTokenAdapterTest {
     void generatesATokenContainingSubjectAndWalletClaim() {
         UUID walletId = UUID.randomUUID();
         User user = userWithWallet(walletId);
+        user.setCpf("11144477735");
+        user.setCellphone("11987654321");
 
         String token = adapter.generateToken(user);
 
@@ -50,6 +52,35 @@ class JwtTokenAdapterTest {
                 .verify(token);
         assertThat(decoded.getSubject()).isEqualTo("pedro@example.com");
         assertThat(decoded.getClaim("walletId").asString()).isEqualTo(walletId.toString());
+        assertThat(decoded.getClaim("profileComplete").asBoolean()).isTrue();
+    }
+
+    @Test
+    void generatesATokenWithoutAWalletClaimAndProfileCompleteFalseWhenWalletAndDocumentsAreMissing() {
+        User user = new User();
+        user.setEmail("pedro@example.com");
+
+        String token = adapter.generateToken(user);
+
+        var decoded = JWT.require(Algorithm.HMAC256(SECRET))
+                .withIssuer("smart-wallet-api")
+                .build()
+                .verify(token);
+        assertThat(decoded.getClaim("walletId").isNull()).isTrue();
+        assertThat(decoded.getClaim("profileComplete").asBoolean()).isFalse();
+    }
+
+    @Test
+    void getEmailFromTokenStripsBearerPrefixAndReturnsTheSubject() {
+        String token = adapter.generateToken(userWithWallet(UUID.randomUUID()));
+
+        assertThat(adapter.getEmailFromToken("Bearer " + token)).isEqualTo("pedro@example.com");
+        assertThat(adapter.getEmailFromToken(token)).isEqualTo("pedro@example.com");
+    }
+
+    @Test
+    void getEmailFromTokenThrowsForAnInvalidToken() {
+        assertThrows(RuntimeException.class, () -> adapter.getEmailFromToken("Bearer invalid"));
     }
 
     @Test

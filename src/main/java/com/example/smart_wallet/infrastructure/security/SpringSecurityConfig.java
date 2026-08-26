@@ -42,6 +42,7 @@ public class SpringSecurityConfig {
                         authorize
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/sign-up").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/google").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(cors ->

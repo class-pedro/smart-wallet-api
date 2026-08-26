@@ -12,12 +12,12 @@ public class CreateWalletUseCaseHandler implements CreateWalletUseCase {
     private final WalletRepository walletRepository;
 
     @Override
-    public void execute(User user) {
+    public Wallet execute(User user) {
         Wallet wallet = new Wallet();
 
         wallet.setUser(user);
         wallet.setBalance(0);
 
-        walletRepository.save(wallet);
+        return walletRepository.save(wallet);
     }
 }

@@ -11,7 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateWalletUseCaseHandlerTest {
@@ -23,14 +25,17 @@ class CreateWalletUseCaseHandlerTest {
     private CreateWalletUseCaseHandler handler;
 
     @Test
-    void createsAWalletWithZeroBalanceForTheUser() {
+    void createsAWalletWithZeroBalanceForTheUserAndReturnsTheSavedWallet() {
         User user = new User();
+        Wallet savedWallet = new Wallet();
+        when(walletRepository.save(any(Wallet.class))).thenReturn(savedWallet);
 
-        handler.execute(user);
+        Wallet result = handler.execute(user);
 
         ArgumentCaptor<Wallet> captor = ArgumentCaptor.forClass(Wallet.class);
         verify(walletRepository).save(captor.capture());
         assertThat(captor.getValue().getUser()).isEqualTo(user);
         assertThat(captor.getValue().getBalance()).isEqualTo(0);
+        assertThat(result).isEqualTo(savedWallet);
     }
 }

@@ -1,11 +1,17 @@
 package com.example.smart_wallet.modules.user.infrastructure.web.controller;
 
+import com.example.smart_wallet.modules.user.application.dto.CompleteProfileCommand;
+import com.example.smart_wallet.modules.user.application.port.out.GoogleIdentityProvider;
+import com.example.smart_wallet.modules.user.application.usecase.completeProfile.CompleteProfileUseCase;
+import com.example.smart_wallet.modules.user.application.usecase.googleAuth.AuthenticateWithGoogleUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.login.GenerateTokenUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.me.GetWalletIdUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.signup.SignUpUserUseCase;
 import com.example.smart_wallet.modules.user.domain.entity.User;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.AuthenticationDTO;
+import com.example.smart_wallet.modules.user.infrastructure.web.dto.CompleteProfileRequest;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.CreateUserRequest;
+import com.example.smart_wallet.modules.user.infrastructure.web.dto.GoogleAuthRequest;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.LoginResponseDTO;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.MeDTO;
 import com.example.smart_wallet.modules.user.infrastructure.web.mapper.CreateUserWebMapper;
@@ -27,6 +33,9 @@ public class AuthenticationController {
     private final SignUpUserUseCase signUpUserUseCase;
     private final GenerateTokenUseCase generateTokenUseCase;
     private final GetWalletIdUseCase getWalletIdUseCase;
+    private final GoogleIdentityProvider googleIdentityProvider;
+    private final AuthenticateWithGoogleUseCase authenticateWithGoogleUseCase;
+    private final CompleteProfileUseCase completeProfileUseCase;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody AuthenticationDTO authenticationDTO) {
@@ -53,5 +62,23 @@ public class AuthenticationController {
         String walletId = getWalletIdUseCase.execute(authHeader);
 
         return ResponseEntity.ok(new MeDTO(walletId));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<LoginResponseDTO> google(@RequestBody @Valid GoogleAuthRequest googleAuthRequest) {
+        var googleUserInfo = googleIdentityProvider.verify(googleAuthRequest.getIdToken());
+        String token = authenticateWithGoogleUseCase.execute(googleUserInfo);
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+    @PatchMapping("/complete-profile")
+    public ResponseEntity<LoginResponseDTO> completeProfile(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid CompleteProfileRequest completeProfileRequest) {
+        String token = completeProfileUseCase.execute(authHeader,
+                new CompleteProfileCommand(completeProfileRequest.getCpf(), completeProfileRequest.getCellphone()));
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 }

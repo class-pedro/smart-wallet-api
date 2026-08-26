@@ -1,11 +1,18 @@
 package com.example.smart_wallet.modules.user.infrastructure.web.controller;
 
+import com.example.smart_wallet.modules.user.application.dto.CompleteProfileCommand;
+import com.example.smart_wallet.modules.user.application.dto.GoogleUserInfo;
+import com.example.smart_wallet.modules.user.application.port.out.GoogleIdentityProvider;
+import com.example.smart_wallet.modules.user.application.usecase.completeProfile.CompleteProfileUseCase;
+import com.example.smart_wallet.modules.user.application.usecase.googleAuth.AuthenticateWithGoogleUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.login.GenerateTokenUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.me.GetWalletIdUseCase;
 import com.example.smart_wallet.modules.user.application.usecase.signup.SignUpUserUseCase;
 import com.example.smart_wallet.modules.user.domain.entity.User;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.AuthenticationDTO;
+import com.example.smart_wallet.modules.user.infrastructure.web.dto.CompleteProfileRequest;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.CreateUserRequest;
+import com.example.smart_wallet.modules.user.infrastructure.web.dto.GoogleAuthRequest;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.LoginResponseDTO;
 import com.example.smart_wallet.modules.user.infrastructure.web.dto.MeDTO;
 import org.junit.jupiter.api.Test;
@@ -39,6 +46,15 @@ class AuthenticationControllerTest {
 
     @Mock
     private GetWalletIdUseCase getWalletIdUseCase;
+
+    @Mock
+    private GoogleIdentityProvider googleIdentityProvider;
+
+    @Mock
+    private AuthenticateWithGoogleUseCase authenticateWithGoogleUseCase;
+
+    @Mock
+    private CompleteProfileUseCase completeProfileUseCase;
 
     @Mock
     private Authentication authentication;
@@ -83,5 +99,31 @@ class AuthenticationControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().walletId()).isEqualTo("wallet-123");
+    }
+
+    @Test
+    void googleVerifiesTheIdTokenAndReturnsAnAccessToken() {
+        GoogleAuthRequest request = new GoogleAuthRequest("google-id-token");
+        GoogleUserInfo googleUserInfo = new GoogleUserInfo("sub-123", "pedro@example.com", "Pedro");
+        when(googleIdentityProvider.verify("google-id-token")).thenReturn(googleUserInfo);
+        when(authenticateWithGoogleUseCase.execute(googleUserInfo)).thenReturn("token-google");
+
+        ResponseEntity<LoginResponseDTO> response = controller.google(request);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getAccess_token()).isEqualTo("token-google");
+    }
+
+    @Test
+    void completeProfileForwardsTheHeaderAndCommandAndReturnsTheUpdatedToken() {
+        CompleteProfileRequest request = new CompleteProfileRequest("11144477735", "11987654321");
+        when(completeProfileUseCase.execute("Bearer abc",
+                new CompleteProfileCommand("11144477735", "11987654321")))
+                .thenReturn("token-updated");
+
+        ResponseEntity<LoginResponseDTO> response = controller.completeProfile("Bearer abc", request);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getAccess_token()).isEqualTo("token-updated");
     }
 }

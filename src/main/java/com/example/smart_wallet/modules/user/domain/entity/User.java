@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String cellphone;
 
+    @Column(unique = true)
+    private String googleId;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -61,6 +64,10 @@ public class User implements UserDetails {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public boolean isProfileComplete() {
+        return cpf != null && cellphone != null;
     }
 
     // Spring Security Methods
