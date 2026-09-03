@@ -1,5 +1,6 @@
 package com.example.smart_wallet.modules.card.application.port.out;
 
+import com.example.smart_wallet.modules.card.application.dto.GetCardDetailsDTO;
 import com.example.smart_wallet.modules.card.application.dto.GetCardIdAndNameDTO;
 import com.example.smart_wallet.modules.card.domain.entity.Card;
 
@@ -15,4 +16,6 @@ public interface CardRepository {
     List<UUID> findIdsByWalletId(UUID walletId);
 
     List<GetCardIdAndNameDTO> findIdsAndNameByWalletId(UUID walletId);
+
+    List<GetCardDetailsDTO> findDetailsByWalletId(UUID walletId);
 }

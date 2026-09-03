@@ -6,11 +6,11 @@ import com.example.smart_wallet.modules.dashboard.application.dto.GetDashboardDT
 import com.example.smart_wallet.modules.dashboard.application.dto.GetDashboardExpenseDTO;
 import com.example.smart_wallet.modules.dashboard.application.dto.GetNonCreditExpensesDTO;
 import com.example.smart_wallet.modules.dashboard.application.port.out.DashboardRepository;
+import com.example.smart_wallet.shared.MoneyNormalizer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class GetDashboardUseCaseHandler implements GetDashboardUseCase {
             GetDashboardExpenseDTO dashboardExpense = new GetDashboardExpenseDTO(
                     statement.getCardId(),
                     statement.getCardName(),
-                    normalizeBigDecimalToDashboard(statement.getTotalStatement())
+                    MoneyNormalizer.centsToReais(statement.getTotalStatement())
             );
             sumOfExpenses = sumOfExpenses.add(statement.getTotalStatement());
             dashboardExpenses.add(dashboardExpense);
@@ -45,7 +45,7 @@ public class GetDashboardUseCaseHandler implements GetDashboardUseCase {
             GetDashboardExpenseDTO dashboardExpense = new GetDashboardExpenseDTO(
                     expense.getExpenseId(),
                     expense.getExpenseDescription(),
-                    normalizeBigDecimalToDashboard(expense.getExpenseCost())
+                    MoneyNormalizer.centsToReais(expense.getExpenseCost())
             );
 
             sumOfExpenses = sumOfExpenses.add(expense.getExpenseCost());
@@ -56,7 +56,7 @@ public class GetDashboardUseCaseHandler implements GetDashboardUseCase {
             GetDashboardExpenseDTO dashboardExpense = new GetDashboardExpenseDTO(
                     payInFullExpense.getExpenseId(),
                     payInFullExpense.getExpenseDescription(),
-                    normalizeBigDecimalToDashboard(payInFullExpense.getExpenseCost())
+                    MoneyNormalizer.centsToReais(payInFullExpense.getExpenseCost())
             );
 
             sumOfExpenses = sumOfExpenses.add(payInFullExpense.getExpenseCost());
@@ -64,17 +64,8 @@ public class GetDashboardUseCaseHandler implements GetDashboardUseCase {
         }
 
         return new GetDashboardDTO(
-                normalizeBigDecimalToDashboard(sumOfExpenses),
+                MoneyNormalizer.centsToReais(sumOfExpenses),
                 dashboardExpenses
         );
-    }
-
-    private static BigDecimal normalizeBigDecimalToDashboard(BigDecimal valor) {
-        if (valor == null) {
-            return null;
-        }
-        return valor
-                .divide(BigDecimal.valueOf(100))
-                .setScale(2, RoundingMode.DOWN);
     }
 }
