@@ -4,6 +4,7 @@ import com.example.smart_wallet.modules.card.application.dto.GetCardDetailsDTO;
 import com.example.smart_wallet.modules.card.infrastructure.web.dto.GetCardDetailsResponseDTO;
 import com.example.smart_wallet.shared.MoneyNormalizer;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,7 +30,7 @@ public class CardDetailsWebMapper {
         return new GetCardDetailsResponseDTO(
                 card.getId(),
                 card.getName(),
-                card.getCreditLimit(),
+                MoneyNormalizer.centsToReais(BigDecimal.valueOf(card.getCreditLimit())),
                 MoneyNormalizer.centsToReais(card.getCurrentInvoice()),
                 currentDueDate.format(DUE_DATE_FORMATTER),
                 status

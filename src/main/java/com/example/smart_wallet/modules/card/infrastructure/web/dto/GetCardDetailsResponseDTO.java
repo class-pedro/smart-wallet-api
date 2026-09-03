@@ -6,7 +6,7 @@ import java.util.UUID;
 public record GetCardDetailsResponseDTO(
         UUID id,
         String name,
-        Integer creditLimit,
+        BigDecimal creditLimit,
         BigDecimal currentInvoice,
         String dueDateLabel,
         String status
