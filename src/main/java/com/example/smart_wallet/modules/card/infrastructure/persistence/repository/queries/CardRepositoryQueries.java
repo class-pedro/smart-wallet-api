@@ -58,6 +58,9 @@ public class CardRepositoryQueries {
                 FROM cards c
                 WHERE c.wallet_id = :walletId
             )
+            -- current_closing is `timestamp`, not `date`, because one of its CASE branches
+            -- subtracts an INTERVAL (date - interval yields timestamp in Postgres) — cast
+            -- back to date explicitly so the native-query projection maps cleanly.
             SELECT
                 c.id AS id,
                 c.name AS name,
@@ -71,8 +74,8 @@ public class CardRepositoryQueries {
                         ELSE 0
                     END
                 ), 0) AS currentInvoice,
-                p.current_closing AS currentClosingDate,
-                p.current_due AS currentDueDate
+                p.current_closing::date AS currentClosingDate,
+                p.current_due::date AS currentDueDate
             FROM cards c
             INNER JOIN periods p ON p.card_id = c.id
             LEFT JOIN expenses e ON e.card_id = c.id
