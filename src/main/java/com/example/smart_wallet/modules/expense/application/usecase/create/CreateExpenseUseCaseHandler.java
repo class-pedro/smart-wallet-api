@@ -35,6 +35,12 @@ public class CreateExpenseUseCaseHandler implements CreateExpenseUseCase {
         Wallet wallet = null;
         final Expense expense = CreateExpenseMapper.toEntity(createExpenseCommand);
 
+        // The frontend never sends a status yet, and there is no UI to schedule a future expense,
+        // so every expense created today is already-paid from the user's perspective.
+        if (expense.getStatus() == null) {
+            expense.setStatus("paid");
+        }
+
         if ((createExpenseCommand.paymentType().equals("credit") ||
                 createExpenseCommand.paymentType().equals("debit")) &&
                 createExpenseCommand.cardId() != null) {
@@ -86,9 +92,12 @@ public class CreateExpenseUseCaseHandler implements CreateExpenseUseCase {
             expense.setWallet(wallet);
             expense.setCard(card);
             expense.setPurchaseDate(calculateInstallmentDate(rootExpensePurchaseDate, installmentNumber));
-            expense.setInstallments(null);
             expense.setInstallmentNumber(installmentNumber);
             expense.setRootExpense(String.valueOf(rootExpenseId));
+
+            if (expense.getStatus() == null) {
+                expense.setStatus("paid");
+            }
 
             if (installmentNumber == quantityOfInstallments) {
                 BigDecimal sumOfPreviousInstallmentCosts =
