@@ -160,7 +160,8 @@ class CreateExpenseUseCaseHandlerTest {
         assertThat(installments.get(1).getCost()).isEqualByComparingTo("33.33");
         // Last installment absorbs the rounding remainder.
         assertThat(installments.get(2).getCost()).isEqualByComparingTo("33.34");
-        assertThat(installments).allMatch(e -> e.getInstallments() == null);
+        // Each installment keeps the original total so its "N/total" label can be rendered later.
+        assertThat(installments).allMatch(e -> e.getInstallments() == 3);
         assertThat(installments).allMatch(e -> e.getCard() == card);
     }
 

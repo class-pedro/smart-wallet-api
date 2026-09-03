@@ -22,14 +22,16 @@ public class CardDetailsWebMapper {
     }
 
     private static GetCardDetailsResponseDTO toResponse(GetCardDetailsDTO card) {
-        String status = LocalDate.now().isAfter(card.getCurrentClosingDate()) ? "fechada" : "aberta";
+        LocalDate currentClosingDate = card.getCurrentClosingDate().toLocalDate();
+        LocalDate currentDueDate = card.getCurrentDueDate().toLocalDate();
+        String status = LocalDate.now().isAfter(currentClosingDate) ? "fechada" : "aberta";
 
         return new GetCardDetailsResponseDTO(
                 card.getId(),
                 card.getName(),
                 card.getCreditLimit(),
                 MoneyNormalizer.centsToReais(card.getCurrentInvoice()),
-                card.getCurrentDueDate().format(DUE_DATE_FORMATTER),
+                currentDueDate.format(DUE_DATE_FORMATTER),
                 status
         );
     }
